@@ -1,0 +1,80 @@
+from userS.models import *
+
+user1 = User.objects.create_user(username='MaximKolosov')
+user2 = User.objects.create_user(username='AndreySelemaev')
+
+Author.objects.create(authorUser=user1)
+Author.objects.create(authorUser=user2)
+
+Category.objects.create(name='Science')
+Category.objects.create(name='Animals')
+Category.objects.create(name='Music')
+Category.objects.create(name='Nature')
+
+author = Author.objects.get(id=1)
+
+Post.objects.create(author=author, categoryType='nw', title='New album!', text='05/09/2024 a new album of the artist was released....')
+Post.objects.get(id=1).postCategory.add(Category.objects.get(id=3))
+
+author = Author.objects.get(id=2)
+
+Post.objects.create(author=author, categoryType='ar', title='What was the last chemical element found?', text='The last chemical element that was synthesized and added to the table of chemical elements was an organic element with .....')
+Post.objects.get(id=2).postCategory.add(Category.objects.get(id=1))
+
+Post.objects.create(author=author, categoryType='ar', title='How do animals survive in winter?', text='Animals have different ways of surviving winter, depending on their species. Some animals spend the winter by hibernating or reducing activity to a minimum in order to .....')
+Post.objects.get(id=3).postCategory.add(Category.objects.get(id=2))
+Post.objects.get(id=3).postCategory.add(Category.objects.get(id=4))
+
+Comment.objects.create(commentPost=Post.objects.get(id=1), commentUser=Author.objects.get(id=2).authorUser, text='I enjoyed listening!')
+Comment.objects.create(commentPost=Post.objects.get(id=2), commentUser=Author.objects.get(id=1).authorUser, text='I did not know this existed.')
+Comment.objects.create(commentPost=Post.objects.get(id=3), commentUser=Author.objects.get(id=1).authorUser, text='I did not think I did learn something new')
+Comment.objects.create(commentPost=Post.objects.get(id=3), commentUser=Author.objects.get(id=1).authorUser, text='Thank you for the article!')
+
+Comment.objects.get(id=1).dislike()
+Comment.objects.get(id=1).dislike()
+Post.objects.get(id=1).like()
+Post.objects.get(id=1).like()
+
+Comment.objects.get(id=2).like()
+Comment.objects.get(id=2).dislike()
+Post.objects.get(id=2).dislike()
+Post.objects.get(id=2).dislike()
+
+Comment.objects.get(id=3).like()
+Comment.objects.get(id=3).like()
+Post.objects.get(id=3).like()
+Post.objects.get(id=3).like()
+Post.objects.get(id=3).like()
+
+Comment.objects.get(id=4).like()
+
+author = Author.objects.get(id=1)
+author.update_rating()
+
+author = Author.objects.get(id=2)
+author.update_rating()
+
+author = Author.objects.order_by('-raitingAuthor')[:1]
+
+for i in author:
+    i.raitingAuthor
+    i.authorUser.username
+
+best_post = Post.objects.get(id=Post.objects.order_by('-rating')[:1])
+best_postAuthor = Author.objects.get(id=str(best_post.author)[-2])
+
+best_post.dateCreation
+best_postAuthor.authorUser
+best_postAuthor.raitingAuthor
+best_post.title
+best_post.preview()
+
+comment_list = Comment.objects.order_by('commentPost')
+
+for i in comment_list:
+    t = Comment.objects.get(id=str(i)[-2])
+    if t.commentPost == best_post:
+        t.dateCreation
+        Author.objects.get(id=t.commentUser_id).authorUser
+        t.rating
+        t.text
